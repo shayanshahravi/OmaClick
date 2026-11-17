@@ -5,6 +5,7 @@ import Quickshell.Hyprland
 import Quickshell.Wayland
 import QtQuick
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 import "config/MenuEntries.js" as MenuEntries
 
@@ -34,6 +35,19 @@ Item {
     for (var i = 0; i < entries.length; i++)
       height += entries[i].separator ? separatorHeight : rowHeight
     return height
+  }
+
+  // Plugin-owned catalogs in i18n/, following the language picked under
+  // Setup > Language. Entries without a `key` keep their literal label.
+  Commons.Translations {
+    id: strings
+    directory: Qt.resolvedUrl("i18n")
+  }
+
+  function entryLabel(entry) {
+    if (!entry) return ""
+    if (entry.key) return strings.t(String(entry.key), String(entry.label || entry.key))
+    return String(entry.label || "")
   }
 
   function openMenu(screen, x, y) {
@@ -186,7 +200,7 @@ Item {
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
                 visible: !row.separator
-                text: row.separator ? "" : String(row.entry.label || "")
+                text: row.separator ? "" : root.entryLabel(row.entry)
                 elide: Text.ElideRight
                 textFormat: Text.PlainText
                 font.family: "Liberation Sans"

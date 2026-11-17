@@ -23,6 +23,9 @@ like part of the shell rather than a bolt-on.
   enough room below, and never runs off the edge.
 - **Omarchy-native look**: the card uses the active theme's popup colours,
   border and corner radius, and follows theme switches live.
+- **Follows the Omarchy language**: rows are labels from a catalog, so a French
+  install shows *Ouvrir un terminal*, *Changer de thème* and friends. Switching
+  the language under Setup > Language re-renders the menu without a restart.
 - **Keyboard friendly**: `Esc` closes it; clicking anywhere else does too, via a
   Hyprland focus grab.
 - **Desktop gestures preserved**: double-clicking the wallpaper still changes
@@ -34,18 +37,22 @@ like part of the shell rather than a bolt-on.
 
 Default entries:
 
-| Entry               | Action                                        |
-| ------------------- | --------------------------------------------- |
-| Open Terminal       | `omarchy-launch-terminal`                     |
-| Open Files          | `nautilus`                                    |
-| Change Wallpaper…   | `omarchy-theme-bg-switcher` + `omarchy-theme-bg-set` |
-| Change Theme…       | `omarchy-theme-switcher` + `omarchy-theme-set` |
-| Settings…           | `omarchy-shell omasettings toggle`            |
-| Lock Screen         | `omarchy-system-lock`                         |
+| Entry               | Catalog key      | Action                                        |
+| ------------------- | ---------------- | --------------------------------------------- |
+| Open Terminal       | `menu.terminal`  | `omarchy-launch-terminal`                     |
+| Open Files          | `menu.files`     | `nautilus`                                    |
+| Change Wallpaper…   | `menu.wallpaper` | `omarchy-theme-bg-switcher` + `omarchy-theme-bg-set` |
+| Change Theme…       | `menu.theme`     | `omarchy-theme-switcher` + `omarchy-theme-set` |
+| Settings…           | `menu.settings`  | `omarchy-shell omasettings toggle`            |
+| Lock Screen         | `menu.lock`      | `omarchy-system-lock`                         |
+
+The *Entry* column is the English label; the catalog key picks the label for the
+current Omarchy language.
 
 ## Requirements
 
-- **Omarchy** (Quattro shell, `schemaVersion: 1` plugin manifests).
+- **Omarchy** (Quattro shell, `schemaVersion: 1` plugin manifests, with
+  `qs.Commons.Translations` for the label catalogs).
 - `nautilus` for the *Open Files* row — edit the entry if you use another file
   manager.
 - No extra packages, no background daemon, no Hyprland keybinding.
@@ -91,11 +98,16 @@ Each row is either a command or a separator:
 
 ```js
 var entries = [
-  { label: "Open Terminal", command: "omarchy-launch-terminal" },
+  { key: "menu.terminal", label: "Open Terminal", command: "omarchy-launch-terminal" },
   { separator: true },
   { label: "My Script", command: "~/bin/my-script" }
 ]
 ```
+
+- `key` is a catalog key from `i18n/<language>.json`. It is looked up when the
+  row is drawn, so the row follows the Omarchy language.
+- `label` is the fallback text: shown when the active catalog has no entry for
+  `key`, and on its own for rows without a `key`.
 
 Then reload the shell:
 
@@ -105,6 +117,17 @@ omarchy-shell shell rescanPlugins
 
 Commands run detached through `Util.execDetached`, i.e. as your user, with your
 environment — the same as running them in a terminal.
+
+## Translations
+
+`i18n/en.json` holds the English labels and `i18n/fr.json` the French ones. To
+add a language, copy `en.json` to a code from
+`$OMARCHY_PATH/default/i18n/locales.json` (for example `de.json`) and translate
+the values; a missing string falls back to English, then to the `label` in
+`MenuEntries.js`.
+
+A row written without a `key` is never translated — that is the intended way to
+keep your own scripts labelled as you like.
 
 ## Uninstall
 

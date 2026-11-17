@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- English and French menu labels in `i18n/`, resolved through
+  `Commons.Translations`, so the menu follows Setup > Language and re-renders
+  when the language changes without a restart.
+- `key` on menu entries, with `label` kept as the fallback text; rows without a
+  `key` stay untranslated for local scripts.
+- CI check that every menu key exists in `i18n/en.json` and that no catalog
+  carries keys English lacks.
+
 ### Changed
 
 - The installer is documented as `./install.sh` from a checkout instead of

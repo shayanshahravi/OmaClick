@@ -98,3 +98,39 @@ jobs:
               print(f"::error::{problem}")
           sys.exit(1 if problems else 0)
           PY
+
+      - name: Check the translation catalogs
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import json, pathlib, re, sys
+
+          root = pathlib.Path(".")
+          problems = []
+          catalogs = {}
+          for path in sorted((root / "i18n").glob("*.json")):
+              try:
+                  catalogs[path.stem] = json.loads(path.read_text())
+              except Exception as exc:
+                  problems.append(f"{path.name}: {exc}")
+
+          english = catalogs.get("en", {})
+          if not english:
+              problems.append("i18n/en.json is required and must not be empty")
+
+          menu_source = (root / "config/MenuEntries.js").read_text()
+          for key in sorted(set(re.findall(r'key:\s*"([^"]+)"', menu_source))):
+              if key not in english:
+                  problems.append(f"menu key {key!r} is missing from i18n/en.json")
+
+          for code, catalog in catalogs.items():
+              if code == "en":
+                  continue
+              for key in catalog:
+                  if key not in english:
+                      problems.append(f"i18n/{code}.json carries {key!r}, which i18n/en.json does not")
+
+          for problem in problems:
+              print(f"::error::{problem}")
+          sys.exit(1 if problems else 0)
+          PY
