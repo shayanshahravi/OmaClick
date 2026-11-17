@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Rows were drawn in a hard-coded `"Liberation Sans"`, so the menu ignored the
+  font Omarchy is configured with. They now use `Style.font.menuFamily` (which
+  honours `omarchy font set` and `OMARCHY_MENU_FONT`) at `Style.font.body`.
+
 ### Changed
 
+- Row, separator and card metrics scale with `omarchy display text size`, so a
+  larger font no longer clips the rows.
 - The installer is documented as `./install.sh` from a checkout instead of
   piping a remote script into a shell, so the marketplace security baseline no
   longer sees a download-and-execute install path.

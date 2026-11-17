@@ -25,9 +25,12 @@ Item {
   property real menuX: 0
   property real menuY: 0
 
-  readonly property int rowHeight: 32
-  readonly property int separatorHeight: 9
-  readonly property int cardWidth: 236
+  // Row metrics follow Omarchy's own type scale, so a larger
+  // `omarchy display text size` grows the menu instead of clipping it.
+  readonly property real textScale: Math.max(1, Style.fontScale)
+  readonly property int rowHeight: Math.round(32 * textScale)
+  readonly property int separatorHeight: Math.round(9 * textScale)
+  readonly property int cardWidth: Math.round(236 * textScale)
   readonly property var entries: MenuEntries.entries
   readonly property int cardHeight: {
     var height = 12
@@ -189,7 +192,7 @@ Item {
                 text: row.separator ? "" : String(row.entry.label || "")
                 elide: Text.ElideRight
                 textFormat: Text.PlainText
-                font.family: "Liberation Sans"
+                font.family: Style.font.menuFamily
                 font.pixelSize: Style.font.body
                 color: row.hovered ? Color.popups.background : Color.popups.text
               }

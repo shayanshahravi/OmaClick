@@ -23,6 +23,10 @@ like part of the shell rather than a bolt-on.
   enough room below, and never runs off the edge.
 - **Omarchy-native look**: the card uses the active theme's popup colours,
   border and corner radius, and follows theme switches live.
+- **Follows the Omarchy font**: rows are drawn in `Style.font.menuFamily` —
+  whatever `omarchy font set` configured, or `OMARCHY_MENU_FONT` when that is
+  set — and sized from `omarchy display text size`. Row, separator and card
+  metrics scale with the text size, so a larger font does not clip.
 - **Keyboard friendly**: `Esc` closes it; clicking anywhere else does too, via a
   Hyprland focus grab.
 - **Desktop gestures preserved**: double-clicking the wallpaper still changes
